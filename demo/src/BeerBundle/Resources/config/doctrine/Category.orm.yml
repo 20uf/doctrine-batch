@@ -1,0 +1,29 @@
+BeerBundle\Entity\Category:
+    type: entity
+    table: category
+    repositoryClass: BeerBundle\Entity\Repository\EntityRepository
+    indexes:
+        searchcode_idx:
+            columns:
+                - code
+    uniqueConstraints:
+        searchunique_idx:
+            columns:
+                - code
+    fields:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+        code:
+            type: string
+            length: 100
+            unique: true
+        name:
+            type: string
+            length: 100
+        description:
+            type: text
+            length: 500
+            nullable: true

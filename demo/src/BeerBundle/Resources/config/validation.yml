@@ -1,0 +1,86 @@
+BeerBundle\Entity\Brewery:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: code
+    properties:
+        code:
+            - NotBlank: ~
+            - Length:
+                min: 0
+                max: 100
+            - Regex:
+                pattern: '/^[a-z0-9-_]+$/i'
+        name:
+            - NotBlank: ~
+            - Length:
+                min: 0
+                max: 100
+        description:
+            - Length:
+                min: 0
+                max: 500
+        address:
+            - Length:
+                min: 0
+                max: 100
+        city:
+            - Length:
+                min: 0
+                max: 100
+        country:
+            - Length:
+                min: 0
+                max: 100
+        phone:
+            - Length:
+                min: 0
+                max: 50
+
+BeerBundle\Entity\Beer:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: code
+    properties:
+        code:
+            - NotBlank: ~
+            - Length:
+                min: 0
+                max: 100
+            - Regex:
+                pattern: '/^[a-z0-9-_]+$/i'
+        name:
+            - NotBlank: ~
+            - Length:
+                min: 0
+                max: 100
+        description:
+            - Length:
+                min: 0
+                max: 500
+        percent:
+            - Range:
+                min: 0
+                max: 40
+        quotation:
+            - Range:
+                min: 0
+                max: 5
+
+BeerBundle\Entity\Category:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: code
+    properties:
+        code:
+            - NotBlank: ~
+            - Length:
+                min: 0
+                max: 100
+            - Regex:
+                pattern: '/^[a-z0-9-_]+$/i'
+        name:
+            - NotBlank: ~
+            - Length:
+                min: 0
+                max: 100
+        description:
+            - Length:
+                min: 0
+                max: 500

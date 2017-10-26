@@ -1,0 +1,51 @@
+BeerBundle\Entity\Beer:
+    type: entity
+    table: beer
+    repositoryClass: BeerBundle\Entity\Repository\EntityRepository
+    indexes:
+        searchcode_idx:
+            columns:
+                - code
+    uniqueConstraints:
+        searchunique_idx:
+            columns:
+                - code
+    fields:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+        code:
+            type: string
+            length: 100
+            unique: true
+        name:
+            type: string
+            length: 100
+        description:
+            type: text
+            length: 500
+            nullable: true
+        percent:
+            type: decimal
+            nullable: true
+            scale: 1
+            precision: 3
+        quotation:
+            type: float
+            nullable: true
+            scale: 2
+            precision: 3
+    manyToOne:
+        brewery:
+            targetEntity: BeerBundle\Entity\Brewery
+            inversedBy: beers
+            joinColumn:
+                name: brewery_id
+                referencedColumnName: id
+        category:
+            targetEntity: BeerBundle\Entity\Category
+            joinColumn:
+                name: category_id
+                referencedColumnName: id
