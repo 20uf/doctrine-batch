@@ -81,6 +81,7 @@ class Job
             $this->writer->write($itemsToWrite);
         }
         CommandLogger::timeAndMemory('job');
+        meminfo_objects_summary(fopen('/tmp/doctrine_batch.log','a+'));
     }
 
     /**
