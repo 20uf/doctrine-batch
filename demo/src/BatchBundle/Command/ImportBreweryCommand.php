@@ -4,7 +4,6 @@ namespace BatchBundle\Command;
 
 use BatchBundle\Job\Job;
 use BatchBundle\Processor\BreweryProcessor;
-use BatchBundle\Processor\CategoryProcessor;
 use BatchBundle\Reader\CsvReader;
 use BatchBundle\Writer\EntityWriter;
 use BeerBundle\Entity\Repository\IdentifiableRepositoryInterface;
@@ -45,7 +44,7 @@ class ImportBreweryCommand extends ContainerAwareCommand
         $writer = new EntityWriter($this->getEntityManager(), $this->getValidator());
 
         $job = new Job($reader, $processor, $writer);
-        $job->setBatchSize(1);
+        $job->setBatchSize(100);
 
         $job->execute();
     }
