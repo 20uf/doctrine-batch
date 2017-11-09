@@ -1,6 +1,7 @@
 BeerBundle\Entity\Brewery:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: code
+        - BeerBundle\Validator\Constraints\UniqueEntityCode: ~
     properties:
         code:
             - NotBlank: ~
@@ -38,6 +39,7 @@ BeerBundle\Entity\Brewery:
 BeerBundle\Entity\Beer:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: code
+        - BeerBundle\Validator\Constraints\UniqueEntityCode: ~
     properties:
         code:
             - NotBlank: ~
@@ -67,6 +69,7 @@ BeerBundle\Entity\Beer:
 BeerBundle\Entity\Category:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: code
+        - BeerBundle\Validator\Constraints\UniqueEntityCode: ~
     properties:
         code:
             - NotBlank: ~
