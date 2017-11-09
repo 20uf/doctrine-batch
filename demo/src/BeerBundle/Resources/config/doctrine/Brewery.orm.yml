@@ -2,6 +2,7 @@ BeerBundle\Entity\Brewery:
     type: entity
     table: brewery
     repositoryClass: BeerBundle\Entity\Repository\EntityRepository
+    changeTrackingPolicy: DEFERRED_EXPLICIT
     indexes:
         searchcode_idx:
             columns:
