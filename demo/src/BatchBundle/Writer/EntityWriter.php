@@ -46,5 +46,8 @@ class EntityWriter implements WriterInterface
         //CommandLogger::info(sprintf('%s entity written', $writeCount));
 
         $this->em->flush();
+        foreach ($items as $item) {
+            $this->em->detach($item);
+        }
     }
 }
