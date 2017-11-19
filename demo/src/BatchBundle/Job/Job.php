@@ -6,6 +6,7 @@ use BatchBundle\Reader\ReaderInterface;
 use BatchBundle\Writer\WriterInterface;
 use BatchBundle\Processor\ProcessorInterface;
 use BeerBundle\Utils\CommandLogger;
+use BeerBundle\Utils\Memory;
 use BeerBundle\Utils\Timer;
 
 
@@ -53,6 +54,8 @@ class Job
     {
         CommandLogger::memory('job');
         Timer::startTime('job');
+        //Timer::startTime('write');
+        //Memory::getUsage('write');
 
         $itemsToWrite  = [];
         $writeCount    = 0;
@@ -70,18 +73,28 @@ class Job
             if (null !== $processedItem) {
                 $itemsToWrite[] = $processedItem;
                 $writeCount++;
+
+
                 if (0 === $writeCount % $this->batchSize) {
                     $this->writer->write($itemsToWrite);
                     $itemsToWrite = [];
+                }
+                if (0 === $writeCount % 1000) {
+                    //CommandLogger::timeAndMemory('write');
+                    //Timer::startTime('write');
+                    //Memory::getUsage('write');
                 }
             }
         }
 
         if (count($itemsToWrite) > 0) {
             $this->writer->write($itemsToWrite);
+            //CommandLogger::timeAndMemory('write');
         }
         CommandLogger::timeAndMemory('job');
-        meminfo_objects_summary(fopen('/tmp/doctrine_batch.log','a+'));
+
+        gc_collect_cycles();
+        meminfo_info_dump(fopen('/tmp/doctrine_batch.log','a+'));
     }
 
     /**
