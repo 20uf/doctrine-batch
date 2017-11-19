@@ -13,7 +13,10 @@ class EntityRepository extends BaseEntityRepository implements IdentifiableRepos
 {
     public function findOneByIdentifier(string $code)
     {
-        $qb = $this->prepareQueryBuilder();
+        $qb = $this->createQueryBuilder('c');
+        $qb->andWhere(
+            $qb->expr()->like('c.code', ':code')
+        );
         $qb->setParameter('code', $code);
 
         $results = $qb->getQuery()->execute();
@@ -29,15 +32,5 @@ class EntityRepository extends BaseEntityRepository implements IdentifiableRepos
         }
 
         return $results[0];
-    }
-
-    private function prepareQueryBuilder()
-    {
-        $qb = $this->createQueryBuilder('c');
-        $qb->andWhere(
-            $qb->expr()->like('c.code', ':code')
-        );
-
-        return $qb;
     }
 }
