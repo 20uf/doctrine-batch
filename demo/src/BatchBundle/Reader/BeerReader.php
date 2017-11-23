@@ -40,6 +40,7 @@ class BeerReader implements ReaderInterface
     private function getResults()
     {
         $results = $this->repository->findAll();
+        $this->repository->clear();
 
         return new \ArrayIterator($results);
     }
