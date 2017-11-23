@@ -25,6 +25,11 @@ class Beer
 
     private $category;
 
+    public function getId()
+    {
+        return $this->id;
+    }
+
     /**
      * @return mixed
      */

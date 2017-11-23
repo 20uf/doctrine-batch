@@ -17,39 +17,42 @@ class BeerReader implements ReaderInterface
     /** @var EntityRepository */
     private $repository;
 
-    /** @var Beer[] */
+    /** @var \ArrayIterator */
     private $results;
 
     /** @var int */
-    private $readCount = 0;
+    private $lastId = 0;
 
     public function __construct(EntityManager $em)
     {
-        $em->getConnection()
-            ->getWrappedConnection()
-            ->setAttribute(\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
         $this->repository = $em->getRepository('BeerBundle\Entity\Beer');
     }
 
     public function read()
     {
-        if (null === $this->results) {
-            $this->results = $this->getResults();
+        if (null === $this->results || empty($this->results)) {
+            $this->repository->clear();
+            $this->getResults($this->lastId);
+        }
+        if (empty($this->results)) {
+            return null;
         }
 
-        $result = $this->results->next();
-        if (null !== $result) {
-            if (++$this->readCount % 100 === 0) {
-                $this->repository->clear();
-            }
-            return $result[0];
-        }
+        $result = array_shift($this->results);
+        $this->lastId = $result->getId();
+
+        return $result;
     }
 
-    private function getResults()
+    private function getResults($id = 0)
     {
         $qb = $this->repository->createQueryBuilder('b');
+        $qb
+            ->where($qb->expr()->gt('b.id', ':id'))
+            ->orderBy('b.id')
+            ->setMaxResults(100)
+            ->setParameter('id', $id);
 
-        return $qb->getQuery()->iterate();
+        $this->results = $qb->getQuery()->execute();
     }
 }

@@ -18,8 +18,8 @@ class BeerToArrayProcessor implements ProcessorInterface
         $data['description'] = $item->getDescription();
         $data['percent'] = $item->getPercent();
         $data['quotation'] = $item->getQuotation();
-        //$data['brewery'] = $item->getBrewery()->getCode();
-        //$data['category'] = $item->getCategory()->getCode();
+        $data['brewery'] = $item->getBrewery()->getCode();
+        $data['category'] = $item->getCategory()->getCode();
 
         return $data;
     }
