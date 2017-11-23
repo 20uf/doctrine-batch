@@ -35,7 +35,6 @@ BeerBundle\Entity\Brewery:
             - Length:
                 min: 0
                 max: 50
-
 BeerBundle\Entity\Beer:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: code
@@ -65,7 +64,6 @@ BeerBundle\Entity\Beer:
             - Range:
                 min: 0
                 max: 5
-
 BeerBundle\Entity\Category:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: code

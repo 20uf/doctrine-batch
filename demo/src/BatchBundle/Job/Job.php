@@ -93,7 +93,6 @@ class Job
         }
         CommandLogger::timeAndMemory('job');
 
-        //gc_collect_cycles();
         //meminfo_info_dump(fopen('/tmp/doctrine_batch.log','a+'));
     }
 
