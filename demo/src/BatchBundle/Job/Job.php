@@ -93,7 +93,7 @@ class Job
         }
         CommandLogger::timeAndMemory('job');
 
-        meminfo_info_dump(fopen('/tmp/doctrine_batch.log','a+'));
+        //meminfo_info_dump(fopen('/tmp/doctrine_batch.log','a+'));
     }
 
     /**

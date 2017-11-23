@@ -37,7 +37,7 @@ class ExportBeerCommand extends ContainerAwareCommand
         $filepath = $input->getArgument('filepath');
         $headers = ['code', 'name', 'description', 'percent', 'quotation', 'brewery', 'category'];
 
-        $reader = new BeerReader($this->getBeerRepository());
+        $reader = new BeerReader($this->getEntityManager());
         $processor = new BeerToArrayProcessor();
         $writer = new CsvWriter($filepath, $headers);
 

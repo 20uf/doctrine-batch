@@ -4,6 +4,7 @@ namespace BatchBundle\Reader;
 
 use BeerBundle\Entity\Beer;
 use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -19,9 +20,15 @@ class BeerReader implements ReaderInterface
     /** @var Beer[] */
     private $results;
 
-    public function __construct(ObjectRepository $repository)
+    /** @var int */
+    private $readCount = 0;
+
+    public function __construct(EntityManager $em)
     {
-        $this->repository = $repository;
+        $em->getConnection()
+            ->getWrappedConnection()
+            ->setAttribute(\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
+        $this->repository = $em->getRepository('BeerBundle\Entity\Beer');
     }
 
     public function read()
@@ -30,18 +37,19 @@ class BeerReader implements ReaderInterface
             $this->results = $this->getResults();
         }
 
-        if (null !== $result = $this->results->current()) {
-            $this->results->next();
+        $result = $this->results->next();
+        if (null !== $result) {
+            if (++$this->readCount % 100 === 0) {
+                $this->repository->clear();
+            }
+            return $result[0];
         }
-
-        return $result;
     }
 
     private function getResults()
     {
-        $results = $this->repository->findAll();
-        $this->repository->clear();
+        $qb = $this->repository->createQueryBuilder('b');
 
-        return new \ArrayIterator($results);
+        return $qb->getQuery()->iterate();
     }
 }
