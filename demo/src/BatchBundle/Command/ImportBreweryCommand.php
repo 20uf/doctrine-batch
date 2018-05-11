@@ -61,8 +61,9 @@ class ImportBreweryCommand extends ContainerAwareCommand
             if ($violations->count() === 0) {
                 // Write entity
                 $this->getEntityManager()->persist($entity);
-                $this->getEntityManager()->flush();
-                $writeCount++;
+                if (0 === ++$writeCount % 100) {
+                    $this->getEntityManager()->flush();
+                }
             } else {
                 $this->printViolations($violations, $entity);
             }
