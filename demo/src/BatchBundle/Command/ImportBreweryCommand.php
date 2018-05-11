@@ -6,13 +6,16 @@ use BatchBundle\Job\Job;
 use BatchBundle\Processor\BreweryProcessor;
 use BatchBundle\Reader\CsvReader;
 use BatchBundle\Writer\EntityWriter;
+use BeerBundle\Entity\Brewery;
 use BeerBundle\Entity\Repository\IdentifiableRepositoryInterface;
 use BeerBundle\Utils\CommandLogger;
+use BeerBundle\Utils\Timer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -39,14 +42,68 @@ class ImportBreweryCommand extends ContainerAwareCommand
             throw new \Exception(sprintf('File "%s" not found', $filepath));
         }
 
-        $reader = new CsvReader($filepath);
-        $processor = new BreweryProcessor($this->getRepository());
-        $writer = new EntityWriter($this->getEntityManager(), $this->getValidator());
+        CommandLogger::memory('Import');
+        Timer::startTime('Import');
 
-        $job = new Job($reader, $processor, $writer);
-        $job->setBatchSize(100);
+        // Read content
+        $writeCount = 0;
+        $fd = fopen($filepath, 'r+');
+        $headers = fgetcsv($fd, null, ';');
 
-        $job->execute();
+        while ($csvRow = fgetcsv($fd, null, ';')) {
+            $csvRow = array_combine($headers, $csvRow);
+
+            // Process data row
+            $entity = $this->process($csvRow);
+
+            // Validate entity
+            $violations = $this->getValidator()->validate($entity);
+            if ($violations->count() === 0) {
+                // Write entity
+                $this->getEntityManager()->persist($entity);
+                $this->getEntityManager()->flush();
+                $writeCount++;
+            } else {
+                $this->printViolations($violations, $entity);
+            }
+        }
+        CommandLogger::info(sprintf('%s entity written', $writeCount));
+
+        fclose($fd);
+        CommandLogger::timeAndMemory('Import');
+    }
+
+    private function process(array $item)
+    {
+        $brewery = $this->findOrCreateBrewery($item['code']);
+        $brewery->setName($item['name']);
+        $brewery->setDescription($item['description']);
+        $brewery->setAddress($item['address']);
+        $brewery->setCity($item['city']);
+        $brewery->setCountry($item['country']);
+        $brewery->setPhone($item['phone']);
+
+        return $brewery;
+    }
+
+    private function findOrCreateBrewery(string $code)
+    {
+        $entity = $this->getRepository()->findOneByIdentifier($code);
+        if (null === $entity) {
+            $entity = new Brewery();
+            $entity->setCode($code);
+        }
+
+        return $entity;
+    }
+
+    private function printViolations(ConstraintViolationList $violations, $item)
+    {
+        foreach ($violations as $violation) {
+            CommandLogger::error(
+                sprintf('Entity "%s" not valid: %s', $item->getCode(), $violation->getMessage())
+            );
+        }
     }
 
     /**
@@ -72,5 +129,4 @@ class ImportBreweryCommand extends ContainerAwareCommand
     {
         return $this->getEntityManager()->getRepository('BeerBundle\Entity\Brewery');
     }
-
 }
