@@ -63,6 +63,7 @@ class ImportBeerCommand extends ContainerAwareCommand
                 $this->getEntityManager()->persist($entity);
                 if (0 === ++$writeCount % 100) {
                     $this->getEntityManager()->flush();
+                    $this->getEntityManager()->clear('BeerBundle\Entity\Beer');
                 }
             } else {
                 $this->printViolations($violations, $entity);
