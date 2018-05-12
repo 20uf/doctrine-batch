@@ -16,8 +16,9 @@ class EntityRepository extends BaseEntityRepository implements IdentifiableRepos
     {
         $qb = $this->createQueryBuilder('c');
         $qb->andWhere(
-            $qb->expr()->eq('c.code', $qb->expr()->literal($code))
+            $qb->expr()->eq('c.code', ':code')
         );
+        $qb->setParameter('code', $code);
 
 
         $results = $qb->getQuery()->execute();
