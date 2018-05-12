@@ -63,7 +63,6 @@ class ImportBeerCommand extends ContainerAwareCommand
                 $this->getEntityManager()->persist($entity);
                 if (0 === ++$writeCount % 100) {
                     $this->getEntityManager()->flush();
-                    gc_collect_cycles();
                 }
             } else {
                 $this->printViolations($violations, $entity);
@@ -72,6 +71,8 @@ class ImportBeerCommand extends ContainerAwareCommand
         CommandLogger::info(sprintf('%s entity written', $writeCount));
 
         fclose($fd);
+
+        gc_collect_cycles();
         meminfo_info_dump(fopen('/tmp/doctrine_batch.log','w'));
         CommandLogger::timeAndMemory('Import');
     }
