@@ -59,7 +59,7 @@ class BeerGeneratorCommand extends ContainerAwareCommand
         }
 
         $faker = \Faker\Factory::create('en_US');
-        $beerCodes = [];
+        //$beerCodes = [];
 
         $headers = [
             'code',
@@ -75,11 +75,11 @@ class BeerGeneratorCommand extends ContainerAwareCommand
         fputcsv($fd, $headers, ';');
         while ($count-- > 0) {
 
-            $code = $faker->slug(2, true);
-            while (isset($beerCodes[$code])) {
-               $code = $faker->slug(2, true);
-            }
-            $beerCodes[$code] = $code;
+            $code = $faker->slug(3, true);
+            //while (isset($beerCodes[$code])) {
+            //   $code = $faker->slug(2, true);
+            //}
+            //$beerCodes[$code] = $code;
 
             $beer = [
                 $code,
