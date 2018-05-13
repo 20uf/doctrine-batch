@@ -10,6 +10,7 @@ use BeerBundle\Entity\Beer;
 use BeerBundle\Entity\Repository\IdentifiableRepositoryInterface;
 use BeerBundle\Utils\CommandLogger;
 use BeerBundle\Utils\Timer;
+use BeerBundle\Validator\Constraints\UniqueEntityCodeValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -64,6 +65,7 @@ class ImportBeerCommand extends ContainerAwareCommand
                 if (0 === ++$writeCount % 100) {
                     $this->getEntityManager()->flush();
                     $this->getEntityManager()->clear();
+                    UniqueEntityCodeValidator::reset();
                 }
             } else {
                 $this->printViolations($violations, $entity);
