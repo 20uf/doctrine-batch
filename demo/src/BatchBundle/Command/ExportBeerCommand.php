@@ -38,6 +38,7 @@ class ExportBeerCommand extends ContainerAwareCommand
         fputcsv($fd, ['code', 'name', 'description', 'percent', 'quotation', 'brewery', 'category'], ';');
 
         $beers = $this->getBeerRepository()->findAll();
+        $this->getEntityManager()->clear();
         foreach ($beers as $beer) {
             $csvRow = $this->process($beer);
             fputcsv($fd, $csvRow, ';');
